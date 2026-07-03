@@ -1,0 +1,352 @@
+---
+title: "Effects of Common Injectable Hormonal Contraceptives on Selected Indices of Central Adiposity among Hausa Women in Kano Metropolis, Nigeria"
+author: 'Abdullahi Yusuf Asuku^1^, Musa Ado Bashir^1,\*^ , Lawan Hassan Adamu^2^, Ibrahim Muhammad Dauda^1^' 
+output:
+  bookdown::word_document2:
+    number_sections: false
+bibliography: "`r rbbt::bbt_write_bib('mybibfile.bib', overwrite = TRUE)`"
+csl: the-pan-african-medical-journal.csl
+date: '`r Sys.Date()`'
+---
+
+^1^Department of Anatomy, Bayero University Kano, Kano State, Nigeria      
+^2^Department of Anatomy, Federal University Dutse, Jigawa State, Nigeria 
+\*Author of Correspondence, Email: [musabashir34\@gmail.com](mailto:musabashir34@gmail.com){.email}, GSM: +2347036878467
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(flextable)
+
+# source the script which writes the figures files to be read by the rmarkdown file
+
+source("Analysis.R", local = knitr::knit_global())
+
+#===========================================================================
+# A. Formatting Table 1
+#===========================================================================
+
+# 1. Load the CSV data
+table_1_data <- read.csv("table-1.csv")
+
+# Clean up column names automatically (removes hidden leading/trailing spaces)
+colnames(table_1_data) <- trimws(colnames(table_1_data))
+
+# 2. Filter and format columns using your exact CSV names (ci_lo and ci_hi)
+table_1_formatted <- table_1_data %>%
+  filter(group == "DMPA-SC") %>%
+  mutate(
+    # Format Mean ± SD for 'Before'
+    `Before (Mean ± SD)` = sprintf("%.2f ± %.2f", before_mean, before_sd),
+    
+    # Format Mean ± SD for 'After'
+    `After (Mean ± SD)` = sprintf("%.2f ± %.2f", after_mean, after_sd),
+    
+    # Formats Mean Delta using your exact columns: ci_lb and ci_lh
+    `Mean Δ (95% CI)` = sprintf("%.3f (%.3f, %.3f)", mean_diff, ci_lo, ci_hi),
+    
+    # Format Wilcoxon p-value adjusted for FDR
+    `Wilcoxon p (FDR-adj.)` = sprintf("%.3f", p_wilcoxon_FDR),
+    
+    # Combine Effect Sizes: r (rank-biserial) and dz (Cohen's d)
+    `Effect size (r; dz)` = sprintf("r=%.2f; dz=%.2f", rank_biserial_r, cohens_dz)
+  ) %>%
+  # Select and rename the final columns to match the output table layout
+  select(
+    Variable = variable,
+    `Before (Mean ± SD)`,
+    `After (Mean ± SD)`,
+    `Mean Δ (95% CI)`,
+    `Wilcoxon p (FDR-adj.)`,
+    `Effect size (r; dz)`
+  )
+
+#===========================================================================
+# B. Formatting Table 2 in similar way
+#===========================================================================
+
+# 1. Load the CSV data
+table_2_data <- read.csv("table-2.csv")
+
+# Clean up column names automatically (removes hidden leading/trailing spaces)
+colnames(table_2_data) <- trimws(colnames(table_2_data))
+
+# 2. Filter and format columns using your exact CSV names (ci_lo and ci_hi)
+table_2_formatted <- table_2_data %>%
+  filter(group == "NET-EN") %>%
+  mutate(
+    # Format Mean ± SD for 'Before'
+    `Before (Mean ± SD)` = sprintf("%.2f ± %.2f", before_mean, before_sd),
+    
+    # Format Mean ± SD for 'After'
+    `After (Mean ± SD)` = sprintf("%.2f ± %.2f", after_mean, after_sd),
+    
+    # Formats Mean Delta using your exact columns: ci_lb and ci_lh
+    `Mean Δ (95% CI)` = sprintf("%.3f (%.3f, %.3f)", mean_diff, ci_lo, ci_hi),
+    
+    # Format Wilcoxon p-value adjusted for FDR
+    `Wilcoxon p (FDR-adj.)` = sprintf("%.3f", p_wilcoxon_FDR),
+    
+    # Combine Effect Sizes: r (rank-biserial) and dz (Cohen's d)
+    `Effect size (r; dz)` = sprintf("r=%.2f; dz=%.2f", rank_biserial_r, cohens_dz)
+  ) %>%
+  # Select and rename the final columns to match the output table layout
+  select(
+    Variable = variable,
+    `Before (Mean ± SD)`,
+    `After (Mean ± SD)`,
+    `Mean Δ (95% CI)`,
+    `Wilcoxon p (FDR-adj.)`,
+    `Effect size (r; dz)`
+  )
+
+#===========================================================================
+# C. Formatting Table 3 in similar way
+#===========================================================================
+
+# 1. Load the CSV data
+table_3_data <- read.csv("table-3.csv")
+
+# Clean up column names automatically to handle hidden spacing issues
+colnames(table_3_data) <- trimws(colnames(table_3_data))
+
+# 2. Format columns to match Table 3 layout exactly
+table_3_formatted <- table_3_data %>%
+  mutate(
+    # Format Adjusted Group Effect: Beta (SE) using 4 decimal places
+    `Adjusted Group Effect (NET-EN vs DMPA-SC; β, SE)` = sprintf("%.4f (%.4f)", group_estimate, group_se),
+    
+    # Format t-value with 3 decimal places
+    `t (df=81)` = sprintf("%.3f", t_value),
+    
+    # Format False Discovery Rate adjusted p-value with 3 decimal places
+    `p-value (FDR-adj.)` = sprintf("%.3f", p_value_FDR),
+    
+    # Format Standardised Beta effect size with 4 decimal places
+    `Standardised β (effect size)` = sprintf("%.4f", std_beta)
+  ) %>%
+  # Select and arrange the final table columns
+  select(
+    Variable = variable,
+    `Adjusted Group Effect (NET-EN vs DMPA-SC; β, SE)`,
+    `t (df=81)`,
+    `p-value (FDR-adj.)`,
+    `Standardised β (effect size)`
+  )
+
+# 3. Print the final styled table to the R console
+
+```
+
+**Word Count for Abstract** = 249
+**Word Count for Main text** = 3126
+
+
+# Abstract {-}
+
+**Background:** Injectable hormonal contraceptives are widely used due to their effectiveness and convenience; however, concerns exist regarding their potential effects on body fat distribution. This study assessed the comparative effects of depot medroxyprogesterone acetate subcutaneous (DMPA-SC) and norethisterone enanthate (NET-EN) on selected indices of central adiposity among Hausa women in Kano metropolis, Nigeria.
+
+**Methods:** A longitudinal study design was employed, involving women using either DMPA-SC or NET-EN. Anthropometric parameters including neck circumference, waist circumference, hip circumference, waist-to-hip ratio (WHR), waist-to-height ratio (WHtR), and body adiposity index (BAI) were measured before and after contraceptive use using standard procedures. Within-group change was assessed using the Wilcoxon signed-rank test with Benjamini-Hochberg FDR correction for multiple comparisons; between-formulation differences were assessed using ANCOVA adjusting for baseline value and age.
+
+**Results:** Both DMPA-SC and NET-EN users exhibited statistically significant increases (p < 0.05) in all six measured indices of central adiposity after six months, with small-to-medium effect sizes (rank-biserial r 0.35–0.66; Cohen’s dz 0.29–0.53) in both groups. After adjusting for baseline value and age, however, ANCOVA found no statistically significant difference between DMPA-SC and NET-EN in the magnitude of change for any index (p = 0.61–0.83).
+
+**Conclusion:** In conclusion, the use of both DMPA-SC and NET-EN is associated with a small but statistically robust increase in central adiposity indices, with no evidence that one formulation is more obesogenic than the other. These findings highlight the need for regular monitoring to mitigate potential cardiometabolic risks associated with  use of injectable hormonal contraceptives.
+
+**Keywords:** Injectable contraceptives, DMPA-SC, NET-EN, central adiposity,  Hausa ethnic group 
+
+# Introduction
+
+Among the various contraceptive methods available, hormonal agents are the most popular and most effective non-surgical method of contraception worldwide [@sule2005weight]. In Nigeria and Africa as a whole, the injectable hormonal contraceptives are gaining acceptance among clients seeking longer contraception [@sule2005weight]. Injectable contraceptive is the most widely used contraceptive method in North Western Nigeria including Kano and a significant increase in the trend of use of modern hormonal contraceptive methods as compared to the non-hormonal methods has been observed [@muhammad2026contraceptive]. In the year 2013, it was reported that the progesterone only injectable contraceptives were the most accepted method of contraception among women in Kano [@yakasai2013].
+
+Injectable contraceptives are associated with multiple side effects including obesogenic effect [@adeyemi2012progestogen]. Studies have reported the effects of hormonal contraceptives on adiposity makers in some populations [@orluwene2014influence;@oshodi2019weight]. It was hypothesised that synthetic progestins may acts in a glucocorticoid-like manner, which results in increased appetite and visceral fat deposition [@oshodi2019weight]. Androgenic contraceptives may also interfere with appetite regulation by suppressing the secretion of the satiating hormone cholecystokinin [@karlsson1992suppression] leading to increased appetite and attendant weight gain.
+In both combined and progestin-only contraceptives there is a down-regulation of reproductive hormones which has been demonstrated to reduce basal metabolic rate, increase visceral fat deposition, increase concentrations of appetite-stimulating hormones and reduce the concentrations of satiating hormones [@berthon2014systematic]. The combination of these mechanism suggests that contraceptive use may result in increased adiposity [@sule2005weight;@proctergray2008effect].
+
+Report from a study shows that weight, fat mass, and central distribution of fat increase when women use injectable contraceptive (DMPA) for birth control [@clark2005weight]. It was demonstrated further that DMPA-associated increases are due to an increase in fat mass and not lean mass [@clark2005weight]. Another study found that users of injectable contraceptive (DMPA) increased in weight, body fat, percent body fat, and central-to-peripheral fat ratio significantly more than oral contraceptive and non-hormonal users [@berenson2009changes]. A study conducted to evaluate weight gain between users of depo-provera and noristerat showed an increase in mean weight among users [@oshodi2019weight].
+
+Globally, several studies have attempted to examine the effect of hormonal contraceptive on body composition with conflicting result. However there is limited knowledge on the preferential pattern of adiposity induced by hormonal contraceptives. Additionally, studies comparing the obesogenic effect of the different formulations of injectable hormonal contraceptives are scarce, particularly in Africa, Nigeria and among Hausa population.
+
+# Methods
+
+## Study area
+The study area was Kano metropolis consisting of six Local Government Areas namely Dala, Fage, Gwale, Municipal, Nassarawa, and Tarauni and some parts of Kumbotso, Ungogo, and Tofa Local Government Areas [@isa2016]. The principal inhabitants of the city are the Hausa people. The study was conducted at the family planning clinic of Murtala Mohammed Specialist Hospital (MMSH) and Nuhu Bamali Maternity Hospital (NBMH) both located in Kano metropolis. Amongst the services provided in these clinics are counselling and contraceptive services. Notable services offered to clients include use of hormonal preparation in form of pills, injectable, intrauterine device insertion, and implants. Barrier methods like condoms are also made available to the clients. Average daily patient turnover in family planning clinic of MMSH is 38 while the average daily patient turnover in family planning clinic of NBMH is 15.
+
+## Study design and technique
+This study was a comparative cross-sectional study designed to assess the effects of common injectable hormonal contraceptives on selected indices of central adiposity among Hausa women in Kano metropolis, Nigeria. A convenience sampling technique was used to recruit eligible participants attending the selected family planning clinics. The study was conducted over a period of 6 months (from February, 2020 to September, 2020). Anthropometric data were obtained from the participants (D1 as baseline data before commencement of injections and D2 as same set of data from the same subjects after 6 months of commencing injections).
+
+## Eligibility criteria
+### Inclusion criteria
+
+The inclusion criteria for the study include Hausa woman:
+
+i. of reproductive age (15-49 years) that gives voluntary consent to participate in the study
+ii. registered in the family planning clinic of MMSH or NBMH.
+iii. that is newly booked for injectable hormonal contraceptive at the family planning clinic of MMSH or NBMH.
+
+### Exclusion criteria
+The exclusion criteria for the study shall include woman:	
+
+i. who is not Hausa by origin and who declines consent to participate in the study
+ii. who is not registered in the family planning clinic of MMSH or BNMH
+iii. who is not in reproductive age (<14year >49years).
+iv. who is not a new client on injectable contraceptive
+v. who is on drugs/nutritional supplements known to affect adiposity or MetS components.
+    
+## Sample size determination 
+The minimum sample size was obtained using the formula expressed below [@cochran1977sampling]: 
+
+ $$n = \frac{Z^2 p q}{d^2} \implies n = \frac{(1.96)^2 \times 0.05 \times (1 - 0.05)}{(0.05)^2} = 72.99$$
+
+Where; n= minimum sample size, Z= standard normal deviation with confidence interval of 95%, P= prevalence (%) of women of reproductive age who are on injectable contraceptive = 5% = 0.05. Q= 1-p = 1-0.05, d = sampling error which is 5% (0.05).
+However in other to increase statistical inference, 85 subjects were studied.
+
+## Grouping of participants
+Participants were grouped based on the type of injectable hormonal contraceptive used:
+
+• Group I: Users of depot medroxyprogesterone acetate (DMPA-SC) 
+• Group II: Users of norethisterone enanthate (NET-EN) 
+
+## Equipments and instrument
+
+1. In-elastic measuring tape (Butterfly model, made in china, graduated in cm, 0-150cm).
+2. Stadiometer (Seca 220IN, Body Meter stadiometer, calibrated in meters, USA).
+3. The weight of the subjects was recorded in kilograms by using digital weighing scale (Omoron) (0.5kg accuracy) with shoes, phones, and bags removed before measurement. 
+
+## Ethical approval
+Ethical approval was obtained from the Ethical Committee of Hospital management Board, Ministry of Health, Kano State (MOH/OH/797/1877). A written informed consent was sought from the participants. The research was also done according to Helsinki declaration.
+
+## Anthropometric measurements
+### Height 
+Height was measured to the nearest 0.1 cm as the vertical distance between the standing surface and the vertex of the head while the subject was standing erect in Frankfort plane and without shoes using a stadiometer, with the head, shoulder, buttocks, calves, and heels of the subject in contact with the measuring rod [@price2006weight].
+
+### Weight
+Weight was measured in kilograms using a digital weighing scale while subject was in light clothes [@Tolonen2018].
+
+### Waist circumference
+Waist circumference was measured in centimeter with a non-stretchable plastic tape horizontally placed over the unclothed abdomen at the midpoint between the iliac crest and the lower border of the rib cage [@Weerarathna2008].
+
+### Hip circumference
+Hip circumference was measured while the subject was standing erect with the feet fairly close together; pockets emptied and the tape passed around the point with the maximum circumference over the bottom [@Tolonen2018].
+
+### Neck circumference
+Neck circumference was measured in centimeter with a non-stretchable plastic tape horizontally placed over the unclothed neck at the level of the thyroid cartilage [@Lean1995].
+
+### Derived Anthropomethric Indices
+
+$$WHR = \frac{Waist\ Circumference \text{ (cm)}}{Hip\ Circumference \text{ (cm)}}$$ [@Odenigbo2011]
+
+$$WHtR = \frac{Waist\ Circumference \text{ (cm)}}{Height \text{ (cm)}}$$ [@Browning2010]
+
+$$BAI = \frac{Hip\ Circumference \text{ (cm)}}{Height \text{ (m)}^{1.5}} - 18$$ [@Bergman2011]
+
+
+
+## Statistical analysis
+Data were described using mean ± standard deviation. Pre- and post-injection distributions of the difference scores were first assessed for normality using the Shapiro-Wilk test; as the majority of variables departed significantly from normality, the Wilcoxon signed-rank test was used as the primary test of within-group change from baseline to six months for both formulations, with the paired Student t-test reported alongside for comparability with prior literature. Effect sizes for within-group change are reported as the matched-pairs rank-biserial correlation (r, the non-parametric effect size accompanying the Wilcoxon test) and Cohen’s dz for paired samples. To formally test whether the two formulations differed in their effect (the comparative question posed by this study), an analysis of covariance (ANCOVA) was fitted for each outcome, with the post-injection value as the dependent variable, contraceptive group (DMPA-SC vs NET-EN) as the factor of interest, and the corresponding baseline value and participant age as covariates; the adjusted group effect is reported as a standardised β coefficient. Because six adiposity indices were tested per group, p-values were adjusted for multiple comparisons using the Benjamini-Hochberg false discovery rate (FDR) procedure, and FDR-adjusted p-values are reported throughout. Analyses were performed in  R software version 4.5.2; P < 0.05 (FDR-adjusted) was considered significant. 
+
+# Results
+The mean age of the DMPA-SC group was 30.9 + 7.4 years and that of NET-EN group 25.4 + 5.3 years. As shown in Figure \@ref(fig:descriptives-fig), DMPA-SC group  has higher before and after mean BAI. For all other adiposity measures, the NET-EN group has higher before and after mean values.
+
+
+```{r descriptives-fig, message=FALSE, warning=FALSE, fig.cap="Distribution of Adiposity Measures Before and After 6 months by Formula"}
+knitr::include_graphics("Figure-1.png")
+```
+
+Figure \@ref(fig:forest-plot-fig) shows the Forest Plot of the adiposity measures from baseline for each of the two groups. Table \@ref(tab:DMPA-SC-table) shows the influence of DMPA-SC injection on the anthropometric measures of adiposity (NC, WC, HC, WHR, WHtR and BAI) of participants before and after the injection. Using the Wilcoxon signed-rank test, subjects in the DMPA-SC group showed a significantly higher value in all six parameters after the injection compared with baseline, and all comparisons remained significant after FDR correction (adjusted p-values 0.015–0.033). Effect sizes were small-to-medium (rank-biserial r = 0.54–0.66; Cohen’s dz = 0.38–0.53), indicating that while the absolute changes were modest in magnitude, the pattern of increase was consistent and not attributable to chance.
+
+
+```{r forest-plot-fig, message=FALSE, warning=FALSE, fig.cap="Mean Change (95%) from Baseline to 6 Months, By Formulation"}
+knitr::include_graphics("Figure-2.png")
+```
+ 
+Table \@ref(tab:NET-EN-table) shows the influence of NET-EN injection on the anthropometric measures of adiposity (NC, WC, HC, WHR, WHtR and BAI) of participants before and after the injection. Using the Wilcoxon signed-rank test, subjects in the NET-EN group also showed a significantly higher value in all six parameters after the injection, with all comparisons remaining significant after FDR correction (adjusted p-values 0.006–0.039). Effect sizes were small-to-medium (rank-biserial r = 0.35–0.66; Cohen’s dz = 0.29–0.41), broadly comparable in magnitude to those observed in the DMPA-SC group. 
+
+Table \@ref(tab:ancova-comparison-table) and Figure \@ref(fig:ancova-comparison-fig) present the ANCOVA comparing the two formulations directly, with each post-injection value adjusted for its corresponding baseline value and participant age. Although both formulations independently produced significant within-group increases (Tables \@ref(tab:DMPA-SC-table) and \@ref(tab:NET-EN-table)), the adjusted between-group comparison found no statistically significant difference between DMPA-SC and NET-EN for any of the six adiposity indices (FDR-adjusted p = 0.61–0.83; standardised β for the group effect ranged from 0.001 to 0.012, indicating negligible practical difference). This indicates that the two formulations are associated with a similar magnitude of adiposity change over six months, rather than one formulation being more obesogenic than the other.
+
+
+```{r ancova-comparison-fig, message=FALSE, warning=FALSE, fig.cap="Group Effect (NET-EN vs DMPA-SC) adjusted for Baseline Value and Age"}
+knitr::include_graphics("Figure-3.png")
+```
+
+# Discussion
+The present study demonstrated a statistically significant increase (p < 0.05) in all assessed anthropometric indices of central adiposity (neck circumference, waist circumference, hip circumference, waist-to-hip ratio, waist-to-height ratio, and body adiposity index) following the use of both DMPA-SC and NET-EN injectable contraceptives. This finding is consistent with previous studies which reported that injectable hormonal contraceptives are associated with increases in body fat and central fat distribution. For instance, [@santos2014] and [@clark2005weight] reported significant increases in waist and hip circumferences as well as overall body fat among users of depot medroxyprogesterone acetate (DMPA). Similarly, [@berenson2009changes] observed increases in weight, body fat, and central-to-peripheral fat ratio among injectable contraceptive users compared to non-users.
+The observed increases in waist circumference, waist-to-hip ratio, and waist-to-height ratio in this study further support the assertion that injectable contraceptives promote central (abdominal) fat accumulation. Waist circumference has been widely recognized as a reliable indicator of abdominal obesity and is strongly associated with visceral fat deposition [@Lean1995;@who2000obesity]. In addition, waist-to-hip ratio and waist-to-height ratio are important indices for assessing fat distribution and cardiometabolic risk, reinforcing the clinical relevance of the observed changes.
+
+The mechanism underlying these changes may be linked to the hormonal effects of progestin-based contraceptives. It has been hypothesized that synthetic progestins may act in a glucocorticoid-like manner, leading to increased appetite and preferential deposition of visceral fat [@proctergray2008effect]. Furthermore, hormonal contraceptives have been shown to reduce basal metabolic rate and alter appetite-regulating hormones, resulting in increased energy intake and fat accumulation [@berthon2014systematic;@berthon2014systematic]. These physiological alterations provide a plausible explanation for the consistent increases observed across all adiposity indices in the present study.
+
+The increase in body adiposity index (BAI) observed in this study is also supported by literature indicating that BAI is a reliable estimator of body fat percentage and may be more sensitive to changes in adiposity than BMI [@Bergman2011]. Additionally, the increases in hip circumference and neck circumference further indicate generalized and upper-body fat deposition, which are recognized components of centripetal obesity [@who2000obesity].
+
+The findings of this study also showed that both DMPA-SC and NET-EN users experienced significant increases in adiposity indices, suggesting that both formulations have obesogenic effects. This is in agreement with findings by [@oshodi2019weight], who reported significant weight gain in users of both Depo-Provera and Noristerat. Similarly, [@Veisi2013] reported weight gain among DMPA users, supporting the general trend observed in injectable contraceptive use. Notably, when the two formulations were compared directly in the present study using ANCOVA adjusting for baseline value and age, no statistically significant difference emerged between DMPA-SC and NET-EN for any of the six adiposity indices (Table 3). This suggests that, in this population, the obesogenic effect is a property shared by progestin-only injectables broadly rather than being specific to one formulation.
+
+Although the increases observed in this study were statistically significant, the magnitude of change was relatively small, with rank-biserial effect sizes in the small-to-medium range (r = 0.35–0.66) and corresponding paired Cohen’s dz of 0.29–0.53. This is comparable to findings from studies such as [@sang1995multicentered] and [@mia2004effect], which reported modest but measurable increases in body weight and adiposity indices over relatively short durations of contraceptive use. Reporting effect sizes alongside p-values is important here: with the present sample size, even small absolute changes can reach statistical significance, so the small-to-medium effect sizes provide a more clinically interpretable indication of magnitude than the p-value alone. This suggests that while the effect of injectable contraceptives on adiposity may be gradual, it remains clinically relevant over time.
+Overall, the findings of this study are in agreement with existing literature, indicating that injectable hormonal contraceptives contribute to increased central adiposity through hormonal, metabolic, and appetite-related mechanisms; the present data, however, do not support the assumption that this obesogenic effect differs meaningfully between the DMPA-SC and NET-EN formulations once baseline differences and age are accounted for.
+
+# Limitations of the study
+The study was limited by its cross-sectional/non-randomised design, restriction to Hausa women in Kano Metropolis, reliance on anthropometric (rather than imaging-based) measures of central adiposity, and potential confounding from unmeasured lifestyle and genetic factors. The two formulation groups were not randomly allocated and differed significantly at baseline in mean age (30.9 vs 25.4 years) and in some baseline adiposity indices; the adjusted ANCOVA comparison (Table 3) accounts for baseline value and age, but residual confounding from unmeasured factors cannot be excluded.
+
+# Recommendations
+
+1. Routine monitoring of anthropometric indices such as waist circumference and waist-to-height ratio should be incorporated into follow-up visits for users of injectable contraceptives.
+2. Health practitioners should encourage lifestyle modifications, including balanced diet and regular physical activity, to mitigate potential weight and fat gain; this recommendation should be confirmed by future studies using validated physical activity instruments, as activity level was not formally validated in the present study.
+3. Further longitudinal studies are recommended to evaluate the long-term effects of DMPA-SC and NET-EN on adiposity and associated metabolic risks, ideally with randomised allocation and validated measures of physical activity and dietary intake to permit fuller adjustment for confounding.
+4. As no statistically significant difference in adiposity change was found between DMPA-SC and NET-EN after adjustment, formulation choice should continue to be guided primarily by other clinical factors (e.g. side-effect profile, dosing interval, patient preference) rather than by an assumption that one formulation carries a lower adiposity risk than the other; counselling on weight monitoring should be offered to users of either formulation.
+
+# Conclusion
+This study demonstrated, using non-parametric (Wilcoxon signed-rank) testing with FDR-corrected p-values and effect sizes, that the use of both DMPA-SC and NET-EN injectable hormonal contraceptives is associated with a small but statistically robust increase in key anthropometric indices of central adiposity, including waist circumference, hip circumference, waist-to-hip ratio, waist-to-height ratio, neck circumference, and body adiposity index. These findings indicate that injectable contraceptives, as a class, may promote central fat accumulation among users. However, a direct between-formulation comparison using ANCOVA, adjusting for baseline value and age, found no statistically significant difference between DMPA-SC and NET-EN for any of the six indices, indicating that the two formulations carry a similar rather than a differential adiposity risk in this population. Although the magnitude of within-group change was small (small-to-medium effect sizes), the consistent pattern across all indices and both formulations suggests a potential cumulative effect with prolonged use. Overall, the study highlights the obesogenic potential of progestin-only injectable contraceptives in general, particularly in relation to central adiposity, which is an important risk factor for cardiometabolic disorders.
+
+# What is already know on this topic
+
+• Injectable hormonal contraceptives are among the most widely used methods of family planning worldwide, particularly in sub-Saharan Africa.
+• Central adiposity, characterized by increased abdominal fat accumulation, is a recognized risk factor for cardiovascular disease, metabolic syndrome, and type 2 diabetes.
+• Previous studies have reported inconsistent findings regarding the effects of different injectable hormonal contraceptives on central adiposity, and evidence from African populations remains limited.
+
+# What this study adds
+
+• This study provides formally tested comparative evidence on the effects of commonly used injectable hormonal contraceptives on selected indices of central adiposity among Hausa women of Nigeria, using FDR-corrected non-parametric tests with effect sizes and an adjusted (ANCOVA) between-formulation comparison, rather than separate within-group tests alone.
+• It generates population-specific data for an understudied ethnic group, helping to address the scarcity of evidence from Northern Nigeria and sub-Saharan Africa.
+• The findings may improve understanding of contraceptive-related changes in body fat distribution and inform contraceptive counseling and clinical decision-making.
+
+# Competing interests
+Authors have no competing interests to declare
+
+# Authors’ contributions
+All authors contributed to the conception and design of the study. Data collection was performed AYA. Data analysis was performed by MAB. Manuscript drafting was done by LHA and IMD. All authors participated in the interpretation of results and critical revision for important intellectual content. All authors read and approved the final version of the manuscript and agree to be accountable for all aspects of the work.
+
+# Tables and figures captions
+
+Table 1: Wilcoxon Signed-Rank Comparison of Anthropometric Indices of Adiposity Before and After DMPA-SC Injection, with Effect Sizes (n = 35)
+
+Table 2: Wilcoxon Signed-Rank Comparison of Anthropometric Indices of Adiposity Before and After NET-EN Injection, with Effect Sizes (n = 50)
+
+Table 3: Adjusted Comparison of DMPA-SC versus NET-EN on Anthropometric Indices of Adiposity (ANCOVA, controlling for baseline value and age)
+
+Figure 1: Distribution of Adiposity Measures Before and After 6 months by Formula
+
+Figure 2: Mean Change (95%) from Baseline to 6 Months, By Formulation
+
+Figure 3: Group Effect (NET-EN vs DMPA-SC) adjusted for Baseline Value and Age
+
+# Data availiability
+
+The data and the R code for this analysis are available in the github repository https://github.com/musabashir34/Injectable_Hormonal_Contraceptives_Effects_on_Nigerian_Women
+
+# References {-}
+
+<div id="refs"></div>
+
+
+```{r DMPA-SC-table, tab.cap="Wilcoxon Signed-Rank Comparison of Anthropometric Indices of Adiposity Before and After DMPA-SC Injection, with Effect Sizes (n = 35)", echo= FALSE}
+flextable(table_1_formatted)
+```
+
+
+```{r NET-EN-table, tab.cap="Wilcoxon Signed-Rank Comparison of Anthropometric Indices of Adiposity Before and After NET-EN-table Injection, with Effect Sizes (n = 50)", echo= FALSE}
+flextable(table_2_formatted)
+```
+
+
+```{r ancova-comparison-table, tab.cap="Adjusted Comparison of DMPA-SC versus NET-EN on Anthropometric Indices of Adiposity (ANCOVA, controlling for baseline value and age)", echo= FALSE}
+flextable(table_3_formatted)
+```
+
